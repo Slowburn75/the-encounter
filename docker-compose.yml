@@ -1,0 +1,22 @@
+name: encounter-worship
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: encounter-postgres
+    environment:
+      POSTGRES_USER: encounter
+      POSTGRES_PASSWORD: encounter
+      POSTGRES_DB: encounter
+    ports:
+      - "54329:5432"
+    volumes:
+      - encounter_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U encounter -d encounter"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  encounter_pg:
