@@ -27,6 +27,7 @@ import {
   scrubSensitiveText,
   slugify,
 } from "@/lib/domain/text";
+import { confirmationMessageNote } from "@/lib/domain/messages";
 import { lagosLocalToUtc, utcToLagosInput } from "@/lib/domain/time";
 import { verifyMetaSignature } from "@/lib/domain/whatsapp-signature";
 import { imageKind } from "@/lib/banners";
@@ -274,6 +275,27 @@ describe("event input", () => {
       {},
     );
     expect(parsed.ok).toBe(false);
+  });
+});
+
+describe("confirmation messaging", () => {
+  it("states delivery only when the provider has confirmed it", () => {
+    expect(confirmationMessageNote(null, true)).toBeNull();
+    expect(confirmationMessageNote("sent", true)).toBeNull();
+    expect(confirmationMessageNote("delivered", true)).toBeNull();
+    expect(confirmationMessageNote("sent", false)).toBe(
+      "A WhatsApp confirmation was sent. Delivery has not been confirmed.",
+    );
+    expect(confirmationMessageNote("queued", false)).toBe(
+      "A WhatsApp confirmation is pending. Delivery has not been confirmed.",
+    );
+    expect(confirmationMessageNote("failed", false)).toBe(
+      "A WhatsApp confirmation could not be sent. This page is still your confirmation.",
+    );
+    expect(confirmationMessageNote("delivered", false)).toBe(
+      "A WhatsApp confirmation was delivered.",
+    );
+    expect(confirmationMessageNote("not_a_status", false)).toBeNull();
   });
 });
 

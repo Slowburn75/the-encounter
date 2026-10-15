@@ -8,7 +8,7 @@ import { CHURCH_NAME } from "@/lib/domain/constants";
 const LINKS = [
   { href: "#about", label: "About" },
   { href: "#gathering", label: "Details" },
-  { href: "#expect", label: "What to expect" },
+  { href: "#expect", label: "Program" },
   { href: "#questions", label: "Questions" },
 ];
 
@@ -44,14 +44,14 @@ export function WorshipHeader({
         ) : (
           <Link
             href="/"
-            className={`font-display text-[1.05rem] leading-none tracking-tight sm:text-xl ${
+            className={`min-w-0 truncate font-display text-[1.05rem] leading-none tracking-tight sm:text-xl ${
               onPhoto ? "text-white" : "text-pine"
             }`}
           >
             {CHURCH_NAME}
           </Link>
         )}
-        <nav aria-label="On this page" className="flex items-center gap-5">
+        <nav aria-label="On this page" className="flex shrink-0 items-center gap-5">
           <div className="hidden items-center gap-5 md:flex">
             {LINKS.map((link) => (
               <a
@@ -65,7 +65,7 @@ export function WorshipHeader({
           </div>
           <a
             href={registerHref}
-            className={`inline-flex min-h-11 items-center justify-center px-4 text-sm font-semibold ${
+            className={`worship-header-cta inline-flex min-h-11 items-center justify-center px-4 text-sm font-semibold ${
               onPhoto ? "bg-white text-pine" : "bg-pine text-white"
             }`}
           >

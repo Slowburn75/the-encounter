@@ -11,33 +11,73 @@ export function SiteFooter({
   contactPhone?: string | null;
   contactEmail?: string | null;
 }) {
-  const hasContact = Boolean(contactName || contactPhone || contactEmail);
+  const phone = contactPhone?.trim() || null;
+  const email = contactEmail?.trim() || null;
+  const name = contactName?.trim() || null;
+  const hasContact = Boolean(name || phone || email);
+
   return (
-    <footer className="border-t border-line px-5 py-14">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 sm:flex-row sm:justify-between">
+    <footer className="border-t border-line px-5 py-16">
+      <div className="mx-auto grid max-w-6xl gap-12 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,0.8fr)]">
         <div>
           <ChurchMark />
-          <p className="mt-4 max-w-xs text-sm leading-6 text-muted">
+          <p className="mt-4 max-w-sm text-base leading-7 text-ink">
             {CHURCH_NAME} gathers from time to time. Each program has its own page and registration link.
           </p>
         </div>
-        <div className="text-sm leading-7">
+        <div>
+          <p className="text-xs font-semibold tracking-[0.16em] text-muted uppercase">Contact</p>
           {hasContact ? (
-            <>
-              <p className="font-semibold text-ink">Contact</p>
-              {contactName ? <p>{contactName}</p> : null}
-              {contactPhone ? <p>{contactPhone}</p> : null}
-              {contactEmail ? <p>{contactEmail}</p> : null}
-            </>
+            <div className="mt-4 space-y-2 text-base leading-7 text-ink">
+              {name ? <p>{name}</p> : null}
+              {phone ? (
+                <p>
+                  <a
+                    href={`tel:${phone.replace(/[^\d+]/g, "")}`}
+                    className="underline decoration-line underline-offset-4 hover:decoration-pine"
+                  >
+                    {phone}
+                  </a>
+                </p>
+              ) : null}
+              {email ? (
+                <p>
+                  <a
+                    href={`mailto:${encodeURIComponent(email)}`}
+                    className="break-all underline decoration-line underline-offset-4 hover:decoration-pine"
+                  >
+                    {email}
+                  </a>
+                </p>
+              ) : null}
+            </div>
           ) : (
-            <p className="max-w-xs text-muted">Contact details are published on each program page.</p>
+            <p className="mt-4 max-w-xs text-base leading-7 text-ink">
+              Contact details are published on each program page.
+            </p>
           )}
-          <p className="mt-4">
-            <Link href="/privacy" className="font-semibold text-pine">
-              Privacy notice
-            </Link>
-          </p>
         </div>
+        <nav aria-label="Footer">
+          <p className="text-xs font-semibold tracking-[0.16em] text-muted uppercase">On this site</p>
+          <ul className="mt-4 space-y-3">
+            <li>
+              <Link
+                href="/"
+                className="text-base font-semibold text-pine underline decoration-pine/30 underline-offset-4 hover:decoration-pine"
+              >
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/privacy"
+                className="text-base font-semibold text-pine underline decoration-pine/30 underline-offset-4 hover:decoration-pine"
+              >
+                Privacy notice
+              </Link>
+            </li>
+          </ul>
+        </nav>
       </div>
     </footer>
   );

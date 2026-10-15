@@ -27,6 +27,29 @@ export function registrationClosedMessage(
   }
 }
 
+/** Public confirmation copy. Null when messaging is paused or no attempt exists. */
+export function confirmationMessageNote(
+  status: string | null | undefined,
+  suspended: boolean,
+): string | null {
+  if (suspended || !status) return null;
+  switch (status) {
+    case "delivered":
+      return "A WhatsApp confirmation was delivered.";
+    case "sent":
+      return "A WhatsApp confirmation was sent. Delivery has not been confirmed.";
+    case "failed":
+      return "A WhatsApp confirmation could not be sent. This page is still your confirmation.";
+    case "pending_provider":
+      return "A WhatsApp confirmation is waiting for the church to connect a provider. This page is your confirmation.";
+    case "queued":
+    case "sending":
+      return "A WhatsApp confirmation is pending. Delivery has not been confirmed.";
+    default:
+      return null;
+  }
+}
+
 export function whatsAppStatusLabel(status: string | null): string {
   switch (status) {
     case "delivered":

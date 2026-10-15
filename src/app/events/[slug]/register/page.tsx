@@ -10,7 +10,15 @@ import { firstParam } from "@/lib/domain/text";
 import { formatVenue } from "@/lib/domain/place";
 import { formatLagos } from "@/lib/domain/time";
 
-export const metadata: Metadata = { title: "Register" };
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const event = await getEventBySlug(slug);
+  return { title: event ? `Register for ${event.title}` : "Register" };
+}
 
 export default async function RegisterPage({
   params,
@@ -25,23 +33,34 @@ export default async function RegisterPage({
   if (!event || !isPublicEventStatus(event.status)) notFound();
   const availability = registrationAvailability(event, new Date(), await acceptedCount(event.id));
   const source = firstParam(query.src).replace(/[^a-z0-9_-]/gi, "").slice(0, 40);
+  const when = formatLagos(event.startsAt);
+  const place = formatVenue(event.venueName, event.venueAddress);
 
   return (
-    <PublicChrome>
-      <p className="text-sm font-semibold text-gold">
-        <Link href={`/events/${event.slug}`}>{event.title}</Link>
-      </p>
-      <h1 className="mt-2 font-display text-4xl text-pine">Register</h1>
-      <p className="mt-2 text-muted">{formatLagos(event.startsAt)} · {formatVenue(event.venueName, event.venueAddress)}</p>
-      <p className="mt-4 text-sm">Required fields are marked. You do not need an account.</p>
-      <div className="mt-6 max-w-2xl">
-        {availability.open ? (
-          <RegistrationForm slug={event.slug} idempotencyKey={crypto.randomUUID()} source={source} />
-        ) : (
-          <p className="rounded-2xl bg-sand px-4 py-4 font-semibold">
-            {registrationClosedMessage(availability.reason, event.registrationOpensAt)}
+    <PublicChrome width="wide">
+      <div className="grid items-start gap-10 lg:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] lg:gap-16">
+        <div>
+          <p className="text-xs font-semibold tracking-[0.2em] text-gold uppercase">Registration</p>
+          <h1 className="mt-3 font-display text-4xl leading-tight text-pine sm:text-5xl">
+            <Link href={`/events/${event.slug}`} className="hover:underline decoration-pine/30 underline-offset-8">
+              {event.title}
+            </Link>
+          </h1>
+          <p className="mt-5 text-lg leading-8 text-ink">{when}</p>
+          {place ? <p className="text-lg leading-8 text-ink">{place}</p> : null}
+          <p className="mt-5 max-w-md text-base leading-7 text-muted">
+            You do not need an account. Required fields are marked. After you register, keep the reference on the next screen.
           </p>
-        )}
+        </div>
+        <div className="min-w-0">
+          {availability.open ? (
+            <RegistrationForm slug={event.slug} idempotencyKey={crypto.randomUUID()} source={source} />
+          ) : (
+            <p className="border border-line bg-card px-6 py-8 text-lg leading-8">
+              {registrationClosedMessage(availability.reason, event.registrationOpensAt)}
+            </p>
+          )}
+        </div>
       </div>
     </PublicChrome>
   );
