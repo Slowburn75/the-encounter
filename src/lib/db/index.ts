@@ -13,7 +13,12 @@ export function getDb(): Database {
   if (!globalForDb.encounterDb) {
     const url = process.env.DATABASE_URL;
     if (!url) throw new Error("DATABASE_URL is not set.");
-    globalForDb.encounterSql = postgres(url, { max: 20 });
+    const local = /localhost|127\.0\.0\.1/.test(url);
+    globalForDb.encounterSql = postgres(url, {
+      max: local ? 10 : 1,
+      idle_timeout: 20,
+      ssl: local ? false : "require",
+    });
     globalForDb.encounterDb = drizzle(globalForDb.encounterSql, { schema });
   }
   return globalForDb.encounterDb;

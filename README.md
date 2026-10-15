@@ -28,6 +28,8 @@ npm run dev
 
 The site runs at [http://localhost:3210](http://localhost:3210). Staff sign in at [http://localhost:3210/admin/login](http://localhost:3210/admin/login).
 
+When the server starts, it keeps the account in `SEED_ADMIN_EMAIL` active as a super administrator. That account can open every program, the registration lists, exports, prayer requests, staff, settings, and the audit log. `npm run db:seed` sets the password from `SEED_ADMIN_PASSWORD` again. Starting the server does not change a password that was already saved.
+
 With `SEED_DEMO_EVENT=true`, the seed publishes The Encounter at `/events/the-encounter`. The public home page is that program’s landing page. Review the date, venue, and description before announcing it.
 
 The local database user, database name, and password are all `encounter`, on port `54329`. That password is only for this local Docker database.

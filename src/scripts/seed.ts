@@ -1,8 +1,8 @@
 import { config } from "dotenv";
 import { eq } from "drizzle-orm";
-import { hashPassword, passwordProblem } from "../lib/auth/password";
+import { ensureBuiltInSuperAdmin } from "../lib/auth/built-in-admin";
 import { closeDb, getDb } from "../lib/db";
-import { events, users } from "../lib/db/schema";
+import { events } from "../lib/db/schema";
 import { lagosLocalToUtc } from "../lib/domain/time";
 
 config({ path: ".env.local" });
@@ -12,43 +12,11 @@ async function main() {
   const email = (process.env.SEED_ADMIN_EMAIL ?? "admin@encounterworship.local")
     .trim()
     .toLowerCase();
-  const password = process.env.SEED_ADMIN_PASSWORD ?? "";
-  const name = process.env.SEED_ADMIN_NAME ?? "Encounter Administrator";
-  if (!password) {
+  if (!process.env.SEED_ADMIN_PASSWORD) {
     throw new Error("Set SEED_ADMIN_PASSWORD in .env.local before seeding.");
   }
-  const problem = passwordProblem(password, email);
-  if (problem) {
-    throw new Error(
-      `${problem} If the password contains #, quote it in .env.local so it is not treated as a comment.`,
-    );
-  }
-
+  await ensureBuiltInSuperAdmin({ resetPassword: true });
   const db = getDb();
-  const passwordHash = await hashPassword(password);
-  const [existing] = await db.select().from(users).where(eq(users.email, email));
-  if (existing) {
-    await db
-      .update(users)
-      .set({
-        name,
-        passwordHash,
-        role: "super_admin",
-        status: "active",
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, existing.id));
-    console.log(`Updated super administrator ${email}`);
-  } else {
-    await db.insert(users).values({
-      name,
-      email,
-      passwordHash,
-      role: "super_admin",
-      status: "active",
-    });
-    console.log(`Created super administrator ${email}`);
-  }
 
   if (process.env.SEED_DEMO_EVENT === "true") {
     const startsAt = lagosLocalToUtc("2026-11-15T17:00");
