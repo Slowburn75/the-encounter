@@ -63,6 +63,7 @@ export function WorshipHeader({
               </a>
             ))}
           </div>
+          <Link href="/flyer" className={`text-sm font-semibold ${onPhoto ? "text-white" : "text-pine"}`}>Create flyer</Link>
           <a
             href={registerHref}
             className={`worship-header-cta inline-flex min-h-11 items-center justify-center px-4 text-sm font-semibold ${

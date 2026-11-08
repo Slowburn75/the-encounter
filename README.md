@@ -78,3 +78,11 @@ The church still needs to confirm:
 Multi-factor authentication for privileged staff is not included in this release. Passwords are stored with scrypt. Sessions last 12 hours.
 
 Draft and archived programs are not public. Closing or cancelling a program keeps the public link working and shows that registration is unavailable.
+
+## Personalized event flyer
+
+The flyer creator is available at `/flyer`. Photos are processed in the browser and are not uploaded or stored. The approved artwork is in `public/flyer/template.png`; `clean.png` is a copy with the printed name placeholder cleared. The flattened artwork retains its existing QR code; its destination has not been verified.
+
+For a future event, replace both artwork files and update the dimensions, circular photo geometry, nameplate placement, and event details in `src/components/flyer/flyer-editor.tsx`. Prepare a clean nameplate from the approved source artwork and check the frame and exported image against that source. The current nameplate was reconstructed from the flattened image, so it is not a pixel-perfect editable original.
+
+Deploy on Vercel by importing the repository and configuring the existing database environment variables described in `.env.example`. The existing build runs database migrations before `next build`; provision the database before deployment. The flyer itself does not require a database.

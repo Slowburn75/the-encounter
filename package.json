@@ -15,12 +15,15 @@
   },
   "dependencies": {
     "drizzle-orm": "^0.45.4",
+    "konva": "^10.9.1",
     "libphonenumber-js": "^1.13.15",
+    "lucide-react": "^1.70.0",
     "next": "16.4.0",
     "postgres": "^3.4.9",
     "qrcode": "^1.5.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "react-konva": "^19.3.2",
     "server-only": "^0.0.1",
     "zod": "^4.6.5"
   },
